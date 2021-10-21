@@ -1,19 +1,36 @@
 ID: COVID_STATISTICS_APP
 _schema-version: '2.1'
 version: 0.0.1
-
 modules:
- - name: csa_db
-   type: hdb
-   path: csa_db
-   requires:
-    - name: hdi_csa_db
-
+  - name: csa_db
+    type: hdb
+    path: csa_db
+    requires:
+      - name: hdi_csa_db
+  - name: csa_core_xsjs
+    type: nodejs
+    path: csa_core_xsjs
+    provides:
+      - name: csa_core_xsjs_api
+        properties:
+          url: '${default-url}'
+    requires:
+      - name: hdi_csa_db
+      - name: csa_db
+  - name: csa_web
+    type: html5
+    path: csa_web
+    requires:
+      - name: csa_core_xsjs_api
+        group: destinations
+        properties:
+          name: csa_core_xsjs_backend
+          url: '~{url}'
 resources:
- - name: hdi_csa_db
-   parameters:
+  - name: hdi_csa_db
+    parameters:
       config:
-         schema: CSA_DB
-   properties:
-      hdi-container-name: ${service-name}
-   type: com.sap.xs.hdi-container
+        schema: CSA_DB
+    properties:
+      hdi-container-name: '${service-name}'
+    type: com.sap.xs.hdi-container
